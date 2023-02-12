@@ -12,11 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const data = await collection
     .aggregate([
       {
-        $match: {
-          img: { $ne: null },
-        },
-      },
-      {
         $search: {
           index: "text",
           text: {
@@ -24,6 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             path: "genre",
             fuzzy: {},
           },
+        },
+      },
+      {
+        $match: {
+          img: { $ne: null },
         },
       },
       {
