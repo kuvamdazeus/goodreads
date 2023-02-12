@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import BookInput from "@/components/BookInput";
 import Books from "@/components/Books";
 import Navbar from "@/components/Navbar";
@@ -10,15 +11,20 @@ interface Props {
 }
 
 export default function IndexPage({ preview }: Props) {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [searchTerm, setSearchterm] = useState("");
+
+  useEffect(() => {}, []);
+
   return (
     <section className="w-screen flex">
       <title>GoodReads - Match books according to genre / personality type!</title>
 
       <Navbar />
 
-      <BookInput />
+      <BookInput setBooks={setBooks} setSearchTerm={setSearchterm} />
 
-      <Books preview={preview} />
+      <Books books={books} preview={preview} searchTerm={searchTerm} />
     </section>
   );
 }
@@ -36,7 +42,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
         },
       },
       {
-        $limit: 25,
+        $project: {
+          img: 1,
+        },
+      },
+      {
+        $limit: 200,
       },
     ])
     .toArray();
@@ -57,8 +68,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     isbn13: doc.isbn13 || null,
     link: doc.link || null,
   }));
-
-  console.log(preview);
 
   return {
     props: {
